@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cruise dates with datepicker widget</title>
+    <title>Accordion, Tab, and Tooltips</title>
     <link rel="stylesheet" href="jquery-ui.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="external/jquery/jquery.js"></script>
@@ -41,25 +41,30 @@
             };
             return false;
         });
-        var returnDate = 0;
-        var departDate = 0;
     });
 
+    var departDate;
+    var returnDate;
     $(document).on('change', '#depart .date', function() {
-        returnDate = $('#returnDate .date').datepicker("getDate");
-        if ($(this).val() > $('#return .date').val().slice(8)) {
-            console.log('depart is after return');
+        departDate = $(this).val().split("/");
+        returnDate = $('#return .date').val().slice(8).split("/");
+        console.log($('#return .date').val());
+        departDateConverted = new Date(departDate[2], departDate[0]-1, departDate[1], 0, 0, 0);
+        returnDateConverted = new Date(returnDate[2], returnDate[0]-1, returnDate[1], 0, 0, 0);
+        var returnval = $('#return .date').val();
+        $('#return .date').datepicker("option", "minDate",
+                    departDateConverted);
+        $('#return .date').val(returnval);
+        if (departDateConverted.getTime() > returnDateConverted.getTime()) {
+            console.log(departDateConverted)
             $('#return .date').val("Return: "+$(this).val());
-        } else {
-            $('#return .date').datepicker("option", "minDate", $('#depart .date').datepicker("getDate"));
-            $('#return .date').val("Return: "+returnDate.toLocaleDateString());
-        }
-        departDate = $('#departDate .date').datepicker("getDate");
+        };
         $(this).val("Depart: "+$(this).val());
     });
 
     $(document).on('change', '#return .date', function() {
-        returnDate = $('#returnDate .date').datepicker("getDate");
+        returnDate = $('#return .date').val().slice(8).split("/");
+        returnDateConverted = new Date(returnDate[2], returnDate[0]-1, returnDate[1], 0, 0, 0);
         $('#return .date').val("Return: "+$(this).val());
     });
 
