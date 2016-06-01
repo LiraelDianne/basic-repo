@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cruise dates with datepicker widget</title>
+    <link rel="stylesheet" href="jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="external/jquery/jquery.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var curDate = new Date();
+        var curDateFormatted = (curDate.getMonth()+1) + "/" + curDate.getDate() + "/" + curDate.getFullYear();
+        $('#depart .date').val('Depart: '+curDateFormatted);
+        $('#return .date').val('Return: '+curDateFormatted);
+        $('.date').datepicker({
+            minDate: (0)
+        });
+
+        $('form').submit(function() {
+            var warning = false;
+            if($('#depart .date').val() == ('Depart: '+curDateFormatted)) {
+                $('#depart .warning').css("display", 'inline-block');
+                warning = true;
+            } else {
+                $('#depart .warning').css("display", 'none');
+            }
+            if($('#return .date').val() == ('Return: '+$('#depart .date').val().slice(8))) {
+                $('#return .warning').css("display", 'inline-block');
+                warning = true;
+            } else {
+                $('#return .warning').css("display", 'none');
+            }
+            if($('#name input').val() == "") {
+                $('#name .warning').css("display", 'inline-block');
+                warning = true;
+            } else {
+                $('#name .warning').css("display", 'none');
+            }
+            if (!warning) {
+                alert("Thanks "+$('#name input').val()+"! Your cruise leaves on "+$('#depart .date').val().slice(8)+" and returns on "+$('#return .date').val().slice(8)+"!");
+            };
+            return false;
+        });
+        var returnDate = 0;
+        var departDate = 0;
+    });
+
+    $(document).on('change', '#depart .date', function() {
+        returnDate = $('#returnDate .date').datepicker("getDate");
+        if ($(this).val() > $('#return .date').val().slice(8)) {
+            console.log('depart is after return');
+            $('#return .date').val("Return: "+$(this).val());
+        } else {
+            $('#return .date').datepicker("option", "minDate", $('#depart .date').datepicker("getDate"));
+            $('#return .date').val("Return: "+returnDate.toLocaleDateString());
+        }
+        departDate = $('#departDate .date').datepicker("getDate");
+        $(this).val("Depart: "+$(this).val());
+    });
+
+    $(document).on('change', '#return .date', function() {
+        returnDate = $('#returnDate .date').datepicker("getDate");
+        $('#return .date').val("Return: "+$(this).val());
+    });
+
+    </script>
+</head>
+<body>
+    <div id="wrapper">
+        <h1>Welcome to Crystal's Plan-a-Cruise</h1>
+        <form>
+            <div id="depart">
+                <input type="text" class="date">
+                <p class="warning">Please select a cruise date that is later than today.</p>
+            </div>
+            <div id="return">
+                <input type="text" class="date">
+                <p class="warning">Please select a cruise length that is longer than a day.</p>
+            </div>
+            <div id="name">
+                <p>Type your name:</p>
+                <input type="text" value="">
+                <p class="warning">Please give me your name!</p>
+            </div>
+            <input type="submit" value="Check dates">
+        </form>
+    </div>
+</body>
+</html>
